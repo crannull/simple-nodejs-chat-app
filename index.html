@@ -27,14 +27,15 @@
 </div>
 
 <script>
-    // Connect to the WebSocket server dynamically based on the current window host
- //   const socket = new WebSocket(`ws://${window.location.host}`);
- 
-    // Replace the old socket line with this one:
-const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-const socket = new WebSocket(`${protocol}//${window.location.host}`);
-
-
+    // 1. Determine the correct protocol: if the page is https, use wss (WebSocket Secure)
+    const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+    
+    // 2. Build the secure connection string using the current browser URL host
+    const socketUrl = `${protocol}${window.location.host}`;
+    
+    console.log("Connecting to WebSocket at:", socketUrl);
+    const socket = new WebSocket(socketUrl);
+    
     const messagesDiv = document.getElementById('messages');
     const messageInput = document.getElementById('message-input');
     const sendBtn = document.getElementById('send-btn');
@@ -45,25 +46,24 @@ const socket = new WebSocket(`${protocol}//${window.location.host}`);
         msgElement.classList.add('message');
         msgElement.textContent = event.data;
         messagesDiv.appendChild(msgElement);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight; // Auto-scroll to the bottom
+        messagesDiv.scrollTop = messagesDiv.scrollHeight; 
     });
 
     // Function to send message
     function sendMessage() {
         const text = messageInput.value.trim();
         if (text !== '') {
-            socket.send(text); // Send data to server
-            messageInput.value = ''; // Clear input field
+            socket.send(text); 
+            messageInput.value = ''; 
         }
     }
 
-    // Trigger send on button click
     sendBtn.addEventListener('click', sendMessage);
-
-    // Trigger send on pressing 'Enter' key
     messageInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') sendMessage();
     });
 </script>
+
+
 </body>
 </html>
