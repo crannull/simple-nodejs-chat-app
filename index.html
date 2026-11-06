@@ -28,8 +28,13 @@
 
 <script>
     // Connect to the WebSocket server dynamically based on the current window host
-    const socket = new WebSocket(`ws://${window.location.host}`);
-    
+ //   const socket = new WebSocket(`ws://${window.location.host}`);
+ 
+    // Replace the old socket line with this one:
+const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+const socket = new WebSocket(`${protocol}//${window.location.host}`);
+
+
     const messagesDiv = document.getElementById('messages');
     const messageInput = document.getElementById('message-input');
     const sendBtn = document.getElementById('send-btn');
