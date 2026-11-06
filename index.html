@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Chat App</title>
+    <title>Codespaces Chat App</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f9; }
-        #chat-container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        #messages { height: 300px; border: 1px solid #ddd; overflow-y: scroll; padding: 10px; margin-bottom: 10px; border-radius: 4px; background: #fafafa; }
-        .message { margin-bottom: 8px; padding: 6px 10px; border-radius: 4px; background: #e2f0cb; width: fit-content; max-width: 80%; }
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f0f2f5; }
+        #chat-container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        #messages { height: 300px; border: 1px solid #ddd; overflow-y: auto; padding: 10px; margin-bottom: 10px; border-radius: 4px; background: #fafafa; }
+        .message { margin-bottom: 8px; padding: 8px 12px; border-radius: 15px; background: #007bff; color: white; width: fit-content; max-width: 80%; }
         #input-container { display: flex; gap: 10px; }
         #message-input { flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
-        button { padding: 10px 20px; border: none; background: #007bff; color: white; border-radius: 4px; cursor: pointer; }
-        button:hover { background: #0056b3; }
+        button { padding: 10px 20px; border: none; background: #28a745; color: white; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #218838; }
     </style>
 </head>
 <body>
 
 <div id="chat-container">
-    <h2>Simple Chat Room</h2>
+    <h2>Codespaces Chat</h2>
     <div id="messages"></div>
     <div id="input-container">
         <input type="text" id="message-input" placeholder="Type a message..." autocomplete="off">
@@ -27,34 +27,30 @@
 </div>
 
 <script>
-    // 1. Determine the correct protocol: if the page is https, use wss (WebSocket Secure)
-    const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-    
-    // 2. Build the secure connection string using the current browser URL host
-    const socketUrl = `${protocol}${window.location.host}`;
-    
-    console.log("Connecting to WebSocket at:", socketUrl);
-    const socket = new WebSocket(socketUrl);
+    // GitHub Codespaces maps forwarded ports to HTTPS/WSS.
+    // This dynamically determines the protocol and host URL.
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const socket = new WebSocket(`${protocol}//${window.location.host}`);
     
     const messagesDiv = document.getElementById('messages');
     const messageInput = document.getElementById('message-input');
     const sendBtn = document.getElementById('send-btn');
 
-    // Receive message from server and display it
+    // Display incoming messages
     socket.addEventListener('message', (event) => {
         const msgElement = document.createElement('div');
         msgElement.classList.add('message');
         msgElement.textContent = event.data;
         messagesDiv.appendChild(msgElement);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight; 
+        messagesDiv.scrollTop = messagesDiv.scrollHeight; // Auto-scroll
     });
 
-    // Function to send message
+    // Send message data
     function sendMessage() {
         const text = messageInput.value.trim();
         if (text !== '') {
-            socket.send(text); 
-            messageInput.value = ''; 
+            socket.send(text);
+            messageInput.value = '';
         }
     }
 
@@ -63,7 +59,5 @@
         if (e.key === 'Enter') sendMessage();
     });
 </script>
-
-
 </body>
 </html>
